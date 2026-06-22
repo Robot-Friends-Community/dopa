@@ -1,0 +1,45 @@
+{
+  "name": "@robot-friends/dopa",
+  "version": "0.1.0",
+  "description": "Department of Port Authorities (DoPA) — a friendly local-dev port registry, inspector, and do-not-kill guard. Stop killing each other's dev servers.",
+  "type": "module",
+  "bin": {
+    "dopa": "bin/dopa.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "port",
+    "ports",
+    "registry",
+    "dev",
+    "devtools",
+    "cli",
+    "kill-port",
+    "netstat",
+    "lsof",
+    "do-not-kill",
+    "port-conflict",
+    "cross-platform"
+  ],
+  "license": "MIT",
+  "author": "Robot Friends (404NOTFOUND LLC)",
+  "homepage": "https://github.com/Robot-Friends-Community/dopa#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Robot-Friends-Community/dopa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Robot-Friends-Community/dopa/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

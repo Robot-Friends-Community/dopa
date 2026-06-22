@@ -1,0 +1,24 @@
+name: Feature request
+description: Suggest an idea for DoPA
+labels: ["enhancement", "needs-review"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: What are you trying to do that DoPA doesn't make easy today?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: What command / flag / behavior would you add?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false

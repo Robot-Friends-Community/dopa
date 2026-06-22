@@ -1,0 +1,7 @@
+node_modules/
+*.log
+.DS_Store
+.dopa/
+.smoke-dopa/
+dist/
+assets/gpt-image-2-manifest.json

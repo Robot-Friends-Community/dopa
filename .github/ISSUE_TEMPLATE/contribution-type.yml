@@ -1,0 +1,24 @@
+name: Contribution
+description: Propose a contribution (so we can classify it before review)
+labels: ["needs-review"]
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: What type of contribution is this?
+      options:
+        - New command
+        - Service label / port hint
+        - Cross-platform fix (lsof / ss / netstat)
+        - Bug fix
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What are you proposing, and why?
+    validations:
+      required: true

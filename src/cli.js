@@ -35,6 +35,7 @@ import {
   registryPath,
 } from "./registry.js";
 import { table, statusBadge, bold, dim, gray, green, red, yellow, cyan } from "./format.js";
+import { buildProjectResolver } from "./project.js";
 
 const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 
@@ -84,13 +85,19 @@ function rowStatus(entry, row) {
 function cmdPatrol(flags) {
   const live = listListening();
   const reg = load();
+  // Resolve the owning project per port (registry first, then PID inference).
+  const resolveProject = buildProjectResolver(live);
   if (flags.json) {
-    const out = live.map((r) => ({
-      ...r,
-      service: identifyService(r.port, r.process),
-      status: rowStatus(getEntry(reg, r.port), r),
-      registry: getEntry(reg, r.port) || null,
-    }));
+    const out = live.map((r) => {
+      const entry = getEntry(reg, r.port);
+      return {
+        ...r,
+        service: identifyService(r.port, r.process),
+        project: resolveProject(r, entry),
+        status: rowStatus(entry, r),
+        registry: entry || null,
+      };
+    });
     console.log(JSON.stringify(out, null, 2));
     return;
   }
@@ -100,16 +107,18 @@ function cmdPatrol(flags) {
   }
   const rows = live.map((r) => {
     const e = getEntry(reg, r.port);
+    const project = resolveProject(r, e);
     return [
       bold(r.port),
       r.pid ?? "—",
       r.process || "?",
+      project ? cyan(project) : dim("—"),
       identifyService(r.port, r.process),
       statusBadge(rowStatus(e, r)),
       e?.note ? dim(e.note) : "",
     ];
   });
-  console.log(table(["PORT", "PID", "PROCESS", "SERVICE", "STATUS", "NOTE"], rows));
+  console.log(table(["PORT", "PID", "PROCESS", "PROJECT", "SERVICE", "STATUS", "NOTE"], rows));
   console.log(dim(`\n${live.length} listening · registry: ${registryPath()}`));
 }
 
@@ -281,7 +290,7 @@ ${bold("USAGE")}
   dopa <command> [port] [flags]
 
 ${bold("INSPECT")}
-  patrol, scan            List every listening port + PID, process, service, status
+  patrol, scan            List every listening port + PID, process, project, service, status
   inspect <port>          Show detail for one port
 
 ${bold("REGISTRY")}

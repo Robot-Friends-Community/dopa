@@ -7,6 +7,11 @@ import path from "node:path";
 import { parseNetstat, parseTasklist, parseLsof, parseSs, dedupeByPort } from "../src/ports.js";
 import { identifyService, isSystemProcess } from "../src/services.js";
 import { permit, revoke, seal, unseal, getEntry, statusOf, entries } from "../src/registry.js";
+import {
+  deriveProjectFromCommandLine,
+  deriveProjectFromCwd,
+  buildProjectResolver,
+} from "../src/project.js";
 
 test("parseNetstat extracts LISTENING ports + pids", () => {
   const sample = [
@@ -98,6 +103,43 @@ test("registry: sealed survives revoke (keeps the do-not-kill flag)", () => {
   unseal(reg, 5432);
   // No reservation and no seal left → the entry is fully cleared.
   assert.equal(getEntry(reg, 5432), null);
+});
+
+test("deriveProjectFromCommandLine reads the dir before node_modules (windows next dev)", () => {
+  const cmd =
+    '"C:\\Program Files\\nodejs\\node.exe" "C:\\Dev\\robobffs\\rf-business-os-onboarding\\node_modules\\.bin\\next" dev -p 40422';
+  assert.equal(deriveProjectFromCommandLine(cmd), "rf-business-os-onboarding");
+});
+
+test("deriveProjectFromCommandLine handles unix paths + other dev servers", () => {
+  assert.equal(
+    deriveProjectFromCommandLine("/usr/bin/node /home/u/dev/discovery-copilot/node_modules/next/dist/bin/next dev"),
+    "discovery-copilot",
+  );
+  assert.equal(
+    deriveProjectFromCommandLine("node /projects/my-site/node_modules/vite/bin/vite.js"),
+    "my-site",
+  );
+});
+
+test("deriveProjectFromCommandLine returns null with no node_modules / bad input", () => {
+  assert.equal(deriveProjectFromCommandLine("postgres -D /var/lib/pgsql/data"), null);
+  assert.equal(deriveProjectFromCommandLine(""), null);
+  assert.equal(deriveProjectFromCommandLine(null), null);
+});
+
+test("deriveProjectFromCwd uses basename, or the dir before node_modules", () => {
+  assert.equal(deriveProjectFromCwd("/home/u/dev/discovery-copilot"), "discovery-copilot");
+  assert.equal(deriveProjectFromCwd("C:\\Dev\\_PROJECTS\\_WIP\\gp-workbench"), "gp-workbench");
+  assert.equal(deriveProjectFromCwd("/home/u/dev/foo/node_modules/.bin"), "foo");
+  assert.equal(deriveProjectFromCwd("/home/u/dev/bar/"), "bar"); // trailing slash tolerated
+  assert.equal(deriveProjectFromCwd(""), null);
+});
+
+test("buildProjectResolver: registry project wins and short-circuits PID inference", () => {
+  const resolve = buildProjectResolver([]);
+  assert.equal(resolve({ pid: 123 }, { project: "workbench" }), "workbench");
+  assert.equal(resolve({ pid: null }, null), null); // no pid → unknown, never guesses
 });
 
 test("registry: sealedness takes precedence over reserved in statusOf", () => {

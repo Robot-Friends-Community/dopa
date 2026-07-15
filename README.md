@@ -77,7 +77,7 @@ dopa evict 3000                          # clear a port (guarded)
 
 | Command | What it does |
 |---|---|
-| `dopa patrol` · `scan` | List every listening port with PID, process, **service label**, and status. |
+| `dopa patrol` · `scan` | List every listening port with PID, process, **owning project**, **service label**, and status. |
 | `dopa inspect <port>` | Full detail for one port: who's live on it + its registry entry. |
 
 ### Registry — the records office

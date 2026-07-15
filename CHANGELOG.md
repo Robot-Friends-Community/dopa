@@ -6,6 +6,14 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+### Added
+- **Patrol `PROJECT` column:** `patrol` now shows which project owns each listening
+  port. Claimed ports use the registry's project; unclaimed processes (e.g. a raw
+  `next dev -pNNNN`) are inferred from the owning PID — the dev-server binary's
+  `node_modules` path in its command line, or the process working directory on
+  unix. Surfaced as `project` in `patrol --json`. Best-effort and non-fatal: an
+  unknown owner simply reads as `—`.
+
 ## [0.1.0] — 2026-06-22
 
 Initial release — the Department of Port Authorities opens its doors.

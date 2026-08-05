@@ -19,13 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-This project's cross-platform port-inspection approach was inspired by, and
-adapted from, the following MIT-licensed projects. Thank you to their authors:
-
-- portcop (https://github.com/Hawila/portcop) — MIT — the per-OS listening-port
-  discovery + kill strategy (lsof / ss / netstat + tasklist).
-- portrm  (https://github.com/abhishekayu/portrm) — MIT — the idea of service
-  identification and safety tiers per listening port.
